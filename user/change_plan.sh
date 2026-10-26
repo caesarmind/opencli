@@ -2,10 +2,10 @@
 ################################################################################
 # Script Name: user/change_plan.sh
 # Description: Change plan for a user and apply new plan limits.
-# Usage: opencli user-change_plan <USERNAME> <NEW_PLAN_NAME>
+# Usage: opencli user-change_plan <USERNAME> <NEW_PLAN_NAME> [--debug]
 # Author: Petar Ćurić
 # Created: 17.11.2023
-# Last Modified: 21.08.2026
+# Last Modified: 26.10.2026
 # Company: OpenPanel, LLC.
 # Copyright (c) openpanel.com
 # 
@@ -126,6 +126,7 @@ failure_count=0
 update_resource() {
     local type="$1"   # cpu or ram
     local value="$2"
+    local env_value="$value"
 
     $debug && echo "Updating ${type^^} limit to $value"
 
