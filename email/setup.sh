@@ -75,7 +75,7 @@ reload_emails_data_file_for_user() {
     all_domains=$(opencli domains-user "$owner")
     sleep 2 # for https://github.com/docker-mailserver/docker-mailserver/blob/cb76075f25e22476e8fdb45adfbea8026d4ea898/target/bin/addmailuser#L16
     all_emails=$(opencli email-setup email list)
-    > "$file_to_refresh"
+    : > "$file_to_refresh"
     while IFS= read -r domain; do
         grep "@${domain}" <<< "$all_emails" >> "$file_to_refresh"
     done <<< "$all_domains"
@@ -84,7 +84,6 @@ reload_emails_data_file_for_user() {
 # ======================================================================
 # Run setup command
 validate_first
-command="$@"
 # https://docker-mailserver.github.io/docker-mailserver/latest/config/setup.sh/
 if [[ "$1" == "email" && ( "$2" == "add" || "$2" == "update" ) && "$4" == "-" ]]; then
     # password comes in on stdin ("-" placeholder), so it isn't exposed in the process list (argv);
@@ -92,7 +91,7 @@ if [[ "$1" == "email" && ( "$2" == "add" || "$2" == "update" ) && "$4" == "-" ]]
     IFS= read -r op_password
     printf '%s\n%s\n' "$op_password" "$op_password" | docker exec -i openadmin_mailserver setup email "$2" "$3"
 else
-    docker exec openadmin_mailserver setup $command
+    docker exec openadmin_mailserver setup "$@"
 fi
 
 if [[ "$1" == "email" && "$2" =~ ^(add|update|del)$ ]] || [[ "$1" == "quota" && "$2" =~ ^(set|del)$ ]]; then
